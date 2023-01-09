@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Management.Automation;
+using System.Runtime.InteropServices;
 using Microsoft.VisualBasic;
 using Microsoft.Win32;
 
@@ -98,16 +99,26 @@ namespace Powershell.Commands.International.CJK
 
                 try
                 {
-                    if (LocaleId is null)
-                    {
-                        Strings.StrConv(str, VbStrConv.Wide);
+
+                    // Microsoft Visual Basic support windows only
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    { 
+					    if (LocaleId is null)
+					    {
+						Strings.StrConv(str, VbStrConv.Wide);
+					    }
+					    else
+					    {
+						Strings.StrConv(str, VbStrConv.Wide, (int)LocaleId);
+					    }
                     }
                     else
-                    {
-                        Strings.StrConv(str, VbStrConv.Wide, (int)LocaleId);
-                    }
+		            { 
+
+		            }
+
                 }
-                catch
+                catch (ArgumentException ex)
                 {
 
                 }
@@ -185,8 +196,6 @@ namespace Powershell.Commands.International.CJK
                 }
                 */
             }
-            var localId = 0x411;
-
 
             PSObject env;
             PSNoteProperty envname;
